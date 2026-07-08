@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:9.1.1")
         // Pinned commit instead of -SNAPSHOT for reproducible builds
-        classpath("com.github.recloudstream.gradle:gradle:81b1d424d")
+        classpath("com.github.recloudstream.cloudstream:gradle:v4.7.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0")
     }
 }
