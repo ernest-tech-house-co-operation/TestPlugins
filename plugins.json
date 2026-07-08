@@ -1,0 +1,25 @@
+[
+    {
+        "url": "https://raw.githubusercontent.com/ernest-tech-house-co-operation/TestPlugins/builds/ernest.cs3",
+        "status": 1,
+        "version": 4,
+        "name": "ernest",
+        "internalName": "ernest",
+        "authors": [
+            "Pease Ernest",
+            "ErnestTech House"
+        ],
+        "description": "Quality-filtered torrent provider for Nothing & CloudStream using apibay.org. Features smart size filtering, quality detection, and magnet link generation for movies, series, and anime.",
+        "fileSize": 16685,
+        "repositoryUrl": "https://github.com/ernest-tech-house-co-operation/TestPlugins",
+        "language": "en",
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "Anime"
+        ],
+        "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Korduene_Logo.png",
+        "apiVersion": 1,
+        "fileHash": "sha256-a332c2e6aa6debf816b12216dbfdb6e5b2df6cbfecb940f68f02b777e248fd3a"
+    }
+]
