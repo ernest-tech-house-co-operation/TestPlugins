@@ -92,9 +92,11 @@ class NothingTorrentProvider : MainAPI() {
     }
 
     // request.data carries the apibay category code (e.g. "200"), request.name is the display label
-    override val mainPage = categories.map { (label, code) ->
-        MainPageRequest(label, code, false)
-    }
+    override var mainPage = mainPageOf(
+        "200" to "Trending Movies",
+        "205" to "Trending TV Shows",
+        "207" to "Trending Anime"
+    )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val catCode = request.data
