@@ -52,36 +52,33 @@ subprojects {
     }
 
     android {
-        namespace = "com.ernest"
-        compileSdk = 36
+    namespace = "com.ernest"
+    compileSdk = 36
 
-        defaultConfig {
-            minSdk = 21
-            targetSdk = 35
-        }
-
-        lint {
-            targetSdk = 36
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
-
-        //noinspection WrongGradleMethod
-        tasks.withType<KotlinJvmCompile> {
-            compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_1_8)
-                freeCompilerArgs.addAll(
-                    "-Xno-call-assertions",
-                    "-Xno-param-assertions",
-                    "-Xno-receiver-assertions",
-                )
-            }
-        }
+    defaultConfig {
+        minSdk = 21
     }
 
+    lint {
+        targetSdk = 36
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    tasks.withType<KotlinJvmCompile> {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+            freeCompilerArgs.addAll(
+                "-Xno-call-assertions",
+                "-Xno-param-assertions",
+                "-Xno-receiver-assertions",
+            )
+        }
+    }
+}
     dependencies {
         val implementation by configurations
         val cloudstream by configurations
