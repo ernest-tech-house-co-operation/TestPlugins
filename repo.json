@@ -1,0 +1,8 @@
+{
+  "name": "Ernest Tech House Repo",
+  "description": "Nothing Torrent Provider and other plugins",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/ernest-tech-house-co-operation/TestPlugins/builds/plugins.json"
+  ]
+}
