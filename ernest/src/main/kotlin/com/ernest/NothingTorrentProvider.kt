@@ -20,7 +20,6 @@ class NothingTorrentProvider : MainAPI() {
         TvType.Anime
     )
 
-    // Category codes from apibay.org
     private val categories = mapOf(
         "Trending Movies" to "200",
         "Trending TV Shows" to "205",
@@ -74,6 +73,18 @@ class NothingTorrentProvider : MainAPI() {
         return "magnet:?xt=urn:btih:$infoHash&dn=$dn$trackerParams"
     }
 
+    // === NEW: wrap/unwrap helpers so the magnet never travels as a "relative" string ===
+    private fun wrapMagnet(magnet: String): String {
+        return "https://magnet.local/?m=${java.net.URLEncoder.encode(magnet, "UTF-8")}"
+    }
+
+    private fun unwrapMagnet(wrapped: String): String {
+        val encoded = Regex("[?&]m=([^&]+)").find(wrapped)?.groupValues?.get(1)
+            ?: return wrapped // already a raw magnet, e.g. old cached data
+        return java.net.URLDecoder.decode(encoded, "UTF-8")
+    }
+    // ===================================================================================
+
     private fun ApibayTorrent.toSearchResponse(): SearchResponse? {
         val sizeBytes = this.size.toLongOrNull() ?: return null
         if (sizeBytes > maxSizeBytes) return null
@@ -81,17 +92,17 @@ class NothingTorrentProvider : MainAPI() {
 
         val quality = detectQuality(this.name)
         val magnet = buildMagnet(this.info_hash, this.name)
+        val wrapped = wrapMagnet(magnet) // CHANGED: pass the disguised url, not the raw magnet
 
         return newMovieSearchResponse(
             "${this.name} [$quality]",
-            magnet,
+            wrapped,
             TvType.Movie
         ) {
             this.posterUrl = null
         }
     }
 
-    // request.data carries the apibay category code (e.g. "200"), request.name is the display label
     override var mainPage = mainPageOf(
         "200" to "Trending Movies",
         "205" to "Trending TV Shows",
@@ -123,8 +134,9 @@ class NothingTorrentProvider : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse {
-        // url here IS the magnet link (we pass it straight through from search/getMainPage)
-        val displayName = Regex("dn=([^&]+)").find(url)
+        // CHANGED: url here is the *wrapped* url now, unwrap first to read dn= properly
+        val magnet = unwrapMagnet(url)
+        val displayName = Regex("dn=([^&]+)").find(magnet)
             ?.groupValues?.get(1)
             ?.let { java.net.URLDecoder.decode(it, "UTF-8") }
             ?: "Unknown Torrent"
@@ -133,7 +145,7 @@ class NothingTorrentProvider : MainAPI() {
             displayName,
             url,
             TvType.Movie,
-            url
+            url // still the wrapped url, unwrapped later in loadLinks
         ) {
             this.posterUrl = null
             this.plot = "Streamed via magnet link through apibay.org"
@@ -146,25 +158,17 @@ class NothingTorrentProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        // NOTE: verify this against current CloudStream torrent-engine docs before shipping.
-        // As of recent CloudStream versions, magnet links are passed to the app's native
-        // torrent engine by emitting an ExtractorLink whose url IS the magnet URI, with
-        // type = ExtractorLinkType.MAGNET (or TORRENT depending on version).
-        // If ExtractorLinkType.MAGNET doesn't exist in your SDK version, check
-        // com.lagradost.cloudstream3.utils.ExtractorLinkType for the correct enum name.
+        val magnet = unwrapMagnet(data) // CHANGED: unwrap back to the real magnet: uri
+
         callback(
             newExtractorLink(
                 source = this.name,
                 name = this.name,
-                url = data
+                url = magnet // real magnet, unmangled, ready to be type-inferred as MAGNET
             ) {
                 this.quality = com.lagradost.cloudstream3.utils.Qualities.Unknown.value
             }
         )
         return true
-    }
-    override fun fixUrl(url: String): String {
-        if (url.startsWith("magnet:")) return url
-        return super.fixUrl(url)
     }
 }
