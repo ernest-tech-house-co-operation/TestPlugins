@@ -163,4 +163,8 @@ class NothingTorrentProvider : MainAPI() {
         )
         return true
     }
+    override fun fixUrl(url: String): String {
+        if (url.startsWith("magnet:")) return url
+        return super.fixUrl(url)
+    }
 }

@@ -9,7 +9,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
 
-version = 2
+version = 3
 
 cloudstream {
     description = "Quality-filtered torrent provider for Nothing & CloudStream using apibay.org. Features smart size filtering, quality detection, and magnet link generation for movies, series, and anime."
