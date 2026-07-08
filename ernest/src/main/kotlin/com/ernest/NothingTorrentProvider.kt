@@ -51,7 +51,7 @@ class NothingTorrentProvider : MainAPI() {
         val added: String,
         val status: String,
         val category: String,
-        val imdb: String
+        val imdb: String? = null
     )
 
     private fun detectQuality(name: String): String {
